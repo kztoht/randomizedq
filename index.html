@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Article Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <h1>Article Quiz</h1>
+    <!-- クイズ部分 -->
+    <div id="quiz-section">
+      <div id="passage"></div>
+      <button id="submit-btn">Submit</button>
+      <div id="score-display"></div>
+      <button id="next-btn" style="display: none;">Next Passage</button>
+    </div>
+    
+    <hr>
+    <!-- 管理者パネル -->
+    <div id="admin-panel">
+      <h2>Admin Panel</h2>
+      <button id="start-stats-btn">今から統計を取る</button>
+      <button id="reset-stats-btn">リセット</button>
+      <div id="stats-display"></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
