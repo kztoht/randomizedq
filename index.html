@@ -1,30 +1,139 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Article Quiz</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Calibri, sans-serif;
+      margin: 20px;
+      font-size: 16px;
+    }
+    .passage-container {
+      margin-bottom: 20px;
+    }
+    select {
+      margin-right: 4px;
+    }
+    .button {
+      margin-top: 10px;
+    }
+    a {
+      text-decoration: none;
+      color: blue;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <div id="app">
-    <h1>Randomized Article Quizzes</h1>
-    <!-- クイズ部分 -->
-    <div id="quiz-section">
-      <div id="passage"></div>
-      <button id="submit-btn">Submit</button>
-      <div id="score-display"></div>
-      <button id="next-btn" style="display: none;">Next Passage</button>
-    </div>
+  <h1>Article Quiz</h1>
+
+  <div id="quiz-container"></div>
+
+  <button id="submit-btn" class="button">Submit</button>
+  <div id="score-display"></div>
+  <button id="next-btn" class="button" style="display:none;">Next Passage</button>
+  
+  <!-- 管理者用ページへのリンク -->
+  <p><a href="admin.html" target="_blank">Admin Panel</a></p>
+
+  <script>
+    // 20 パッセージの定義（例として1つを掲載し、残りは同じものをコピー）
+    const passages = [
+      "Yesterday, my family went to [the] park near our house. We brought [a] blanket and some food to enjoy a picnic. My sister saw [a] dog running around and wanted to play with it. We sat under [the] big tree and listened to birds singing. I opened [an] orange juice bottle, but it spilled on my pants. After lunch, we played [ ] soccer with other kids. It was [a] nice way to spend the afternoon. Before leaving, we took [a] photo together. I really liked [the] weather and the fresh air. It was [a] perfect day."
+      // ※ 実際はここに残り19のパッセージを追加してください
+    ];
+    // テスト用として、パッセージ数が20未満の場合、同じものを複製
+    while(passages.length < 20) {
+      passages.push(passages[0]);
+    }
     
-    <hr>
-    <!-- 管理者パネル -->
-    <div id="admin-panel">
-      <h2>Admin Panel</h2>
-      <button id="start-stats-btn">今から統計を取る</button>
-      <button id="reset-stats-btn">リセット</button>
-      <div id="stats-display"></div>
-    </div>
-  </div>
-  <script src="script.js"></script>
+    const blankOptions = ["a", "an", "the", ""];
+
+    // パッセージを解析して、テキスト部分と正答部分に分割する関数
+    function parsePassage(passageText) {
+      const parts = passageText.split(/\[([^\]]*)\]/);
+      const segments = [];
+      const answers = [];
+      for (let i = 0; i < parts.length; i++) {
+        if (i % 2 === 0) {
+          segments.push(parts[i]);
+        } else {
+          answers.push(parts[i]);
+          segments.push(null);
+        }
+      }
+      return { segments, answers };
+    }
+
+    let currentPassageObj;
+    let userAnswers = [];
+
+    // パッセージを画面に描画する関数
+    function renderPassage(passageObj) {
+      const container = document.getElementById("quiz-container");
+      container.innerHTML = "";
+      let html = "";
+      let blankCount = 0;
+      passageObj.segments.forEach(seg => {
+        if (seg === null) {
+          html += `<select data-index="${blankCount}">
+                     <option value="">--</option>`;
+          blankOptions.forEach(opt => {
+            const displayOpt = opt === "" ? "(空欄)" : opt;
+            html += `<option value="${opt}">${displayOpt}</option>`;
+          });
+          html += `</select>`;
+          blankCount++;
+        } else {
+          html += seg;
+        }
+      });
+      container.innerHTML = `<p>${html}</p>`;
+      // ユーザー回答の初期化
+      userAnswers = new Array(passageObj.answers.length).fill("");
+    }
+
+    // ランダムにパッセージを選ぶ関数
+    function pickRandomPassage() {
+      const idx = Math.floor(Math.random() * passages.length);
+      return parsePassage(passages[idx]);
+    }
+
+    // 新規セッションの初期化
+    function initSession() {
+      currentPassageObj = pickRandomPassage();
+      renderPassage(currentPassageObj);
+      document.getElementById("score-display").innerText = "";
+      document.getElementById("next-btn").style.display = "none";
+    }
+
+    // 採点関数
+    function checkAnswers() {
+      const selects = document.querySelectorAll("#quiz-container select");
+      selects.forEach(select => {
+        const idx = select.getAttribute("data-index");
+        userAnswers[idx] = select.value;
+      });
+      let score = 0;
+      currentPassageObj.answers.forEach((correct, idx) => {
+        if (userAnswers[idx] === correct) score++;
+      });
+      document.getElementById("score-display").innerText = `Your Score: ${score} / ${currentPassageObj.answers.length}`;
+    }
+
+    // イベントリスナーの設定
+    document.getElementById("submit-btn").addEventListener("click", function() {
+      checkAnswers();
+      document.getElementById("next-btn").style.display = "inline-block";
+    });
+
+    document.getElementById("next-btn").addEventListener("click", function() {
+      initSession();
+    });
+
+    // 初期セッション開始
+    initSession();
+  </script>
 </body>
 </html>
