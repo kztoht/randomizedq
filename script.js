@@ -95,11 +95,18 @@ document.addEventListener("DOMContentLoaded", function () {
       `Your Score: ${score} / ${currentPassageObj.answers.length}`;
 
     if (statsActive) {
-      totalScore += score;
-      totalQuestions += currentPassageObj.answers.length;
-      localStorage.setItem("totalScore", totalScore);
-      localStorage.setItem("totalQuestions", totalQuestions);
-    }
+  // Stats A
+  const scoreA = parseInt(localStorage.getItem("scoreA")) || 0;
+  const questionsA = parseInt(localStorage.getItem("questionsA")) || 0;
+  localStorage.setItem("scoreA", scoreA + score);
+  localStorage.setItem("questionsA", questionsA + currentPassageObj.answers.length);
+
+  // Stats B
+  const scoreB = parseInt(localStorage.getItem("scoreB")) || 0;
+  const questionsB = parseInt(localStorage.getItem("questionsB")) || 0;
+  localStorage.setItem("scoreB", scoreB + score);
+  localStorage.setItem("questionsB", questionsB + currentPassageObj.answers.length);
+}
   }
 
   document.getElementById("submit-btn").addEventListener("click", function () {
