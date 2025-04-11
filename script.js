@@ -23,7 +23,7 @@ const passagesArray = [
 ];
 
 // 選択肢としての4択
-const blankOptions = ["a", "an", "the", ""];
+const blankOptions = [" ", "a", "an", "the"];
 
 // passage のテキストを解析する関数
 // 角括弧の中身を正答として抽出し、その間のテキストはそのままの文字列として分割します。
@@ -66,13 +66,6 @@ function loadRandomPassage() {
     if (segment === null) {
       // セレクトボックスを作成
       const selectEl = document.createElement("select");
-      // 空欄の選択肢（空文字は「(空欄)」と表示）
-      blankOptions.forEach(opt => {
-        const optionEl = document.createElement("option");
-        optionEl.value = opt;
-        optionEl.text = (opt === "" ? "(空欄)" : opt);
-        selectEl.appendChild(optionEl);
-      });
       // 選択が変わったとき
       selectEl.addEventListener("change", (e) => {
         const blankIndex = Math.floor(idx / 2);
