@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.setItem("questionsB", questionsB + currentPassageObj.answers.length);
     }
 
-    // ✅ 一度提出したらボタン無効化
     document.getElementById("submit-btn").disabled = true;
   }
 
