@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <style>
+    body {
+      font-family: Calibri, sans-serif;
+      margin: 20px;
+      font-size: 16px;
+    }
+    .login-container, .admin-container {
+      max-width: 400px;
+      margin: auto;
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+    .button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      font-size: 16px;
+    }
+    input[type="password"] {
+      padding: 4px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ログインフォーム -->
+  <div class="login-container" id="loginContainer">
+    <h1>Admin Login</h1>
+    <p>Please enter the password:</p>
+    <input type="password" id="passwordInput">
+    <br>
+    <button id="loginBtn" class="button">Login</button>
+    <p id="loginError" style="color:red;"></p>
+  </div>
+
+  <!-- 管理者パネル（ログイン成功後に表示） -->
+  <div class="admin-container hidden" id="adminContainer">
+    <h1>Admin Panel</h1>
+    <div id="statsDisplay"></div>
+    <button id="resetBtn" class="button">Reset Stats</button>
+    <button id="logoutBtn" class="button">Logout</button>
+  </div>
+
+  <script>
+    // パスワードは "1324"
+    const correctPassword = "1324";
+    
+    // 要素の取得
+    const loginContainer = document.getElementById("loginContainer");
+    const adminContainer = document.getElementById("adminContainer");
+    const passwordInput = document.getElementById("passwordInput");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginError = document.getElementById("loginError");
+    const statsDisplay = document.getElementById("statsDisplay");
+    const resetBtn = document.getElementById("resetBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // クライアント側の簡単なパスワード保護（localStorage を利用）
+    function checkAuthentication() {
+      return localStorage.getItem("adminAuthenticated") === "true";
+    }
+
+    function showAdminPanel() {
+      adminContainer.classList.remove("hidden");
+      loginContainer.classList.add("hidden");
+      displayStats();
+    }
+
+    // 統計情報は index.html のクイズで、各セッション終了時に localStorage に保存されている前提です。
+    // ここでは "totalScore" と "totalQuestions" を localStorage から取得して表示します。
+    function displayStats() {
+      const totalScore = parseInt(localStorage.getItem("totalScore")) || 0;
+      const totalQuestions = parseInt(localStorage.getItem("totalQuestions")) || 0;
+      let percentage = 0;
+      if (totalQuestions > 0) {
+        percentage = ((totalScore / totalQuestions) * 100).toFixed(2);
+      }
+      statsDisplay.innerText = `Overall Correct Rate: ${percentage}% (${totalScore} correct out of ${totalQuestions} questions)`;
+    }
+
+    // ログインボタンの処理
+    loginBtn.addEventListener("click", function(){
+      const entered = passwordInput.value;
+      if (entered === correctPassword) {
+        localStorage.setItem("adminAuthenticated", "true");
+        showAdminPanel();
+      } else {
+        loginError.innerText = "Incorrect password. Please try again.";
+      }
+    });
+
+    // 統計リセットボタンの処理
+    resetBtn.addEventListener("click", function(){
+      if (confirm("Are you sure you want to reset the stats? This cannot be undone.")) {
+        localStorage.setItem("totalScore", "0");
+        localStorage.setItem("totalQuestions", "0");
+        displayStats();
+        alert("Statistics have been reset.");
+      }
+    });
+
+    // ログアウトボタンの処理
+    logoutBtn.addEventListener("click", function(){
+      localStorage.removeItem("adminAuthenticated");
+      location.reload();
+    });
+
+    // ページロード時に認証済みかチェック
+    window.addEventListener("load", function(){
+      if (checkAuthentication()) {
+        showAdminPanel();
+      } else {
+        loginContainer.classList.remove("hidden");
+        adminContainer.classList.add("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
