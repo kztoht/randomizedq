@@ -9,21 +9,14 @@
       margin: 20px;
       font-size: 16px;
     }
-    .login-container, .admin-container {
+    .admin-container {
       max-width: 400px;
       margin: auto;
       text-align: center;
     }
-    .hidden {
-      display: none;
-    }
     .button {
       margin-top: 10px;
       padding: 6px 12px;
-      font-size: 16px;
-    }
-    input[type="password"] {
-      padding: 4px;
       font-size: 16px;
     }
     .section {
@@ -32,18 +25,7 @@
   </style>
 </head>
 <body>
-  <!-- ログインフォーム -->
-  <div class="login-container" id="loginContainer">
-    <h1>Admin Login</h1>
-    <p>Please enter the password:</p>
-    <input type="password" id="passwordInput">
-    <br>
-    <button id="loginBtn" class="button">Login</button>
-    <p id="loginError" style="color:red;"></p>
-  </div>
-
-  <!-- 管理者パネル -->
-  <div class="admin-container hidden" id="adminContainer">
+  <div class="admin-container" id="adminContainer">
     <h1>Admin Panel</h1>
 
     <div class="section">
@@ -57,57 +39,25 @@
       <div id="statsBDisplay"></div>
       <button id="resetBBtn" class="button">Reset Stats B</button>
     </div>
-
-    <button id="logoutBtn" class="button">Logout</button>
   </div>
 
   <script>
-    const correctPassword = "1324";
-
-    const loginContainer = document.getElementById("loginContainer");
-    const adminContainer = document.getElementById("adminContainer");
-    const passwordInput = document.getElementById("passwordInput");
-    const loginBtn = document.getElementById("loginBtn");
-    const loginError = document.getElementById("loginError");
-
     const statsADisplay = document.getElementById("statsADisplay");
     const statsBDisplay = document.getElementById("statsBDisplay");
     const resetABtn = document.getElementById("resetABtn");
     const resetBBtn = document.getElementById("resetBBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    function checkAuthentication() {
-      return localStorage.getItem("adminAuthenticated") === "true";
-    }
-
-    function showAdminPanel() {
-      adminContainer.classList.remove("hidden");
-      loginContainer.classList.add("hidden");
-      displayStats();
-    }
 
     function displayStats() {
-      // Stats A
       const scoreA = parseInt(localStorage.getItem("scoreA")) || 0;
       const questionsA = parseInt(localStorage.getItem("questionsA")) || 0;
       const percentA = questionsA > 0 ? ((scoreA / questionsA) * 100).toFixed(2) : "0.00";
       statsADisplay.innerText = `Correct Rate: ${percentA}% (${scoreA} / ${questionsA})`;
 
-      // Stats B
       const scoreB = parseInt(localStorage.getItem("scoreB")) || 0;
       const questionsB = parseInt(localStorage.getItem("questionsB")) || 0;
       const percentB = questionsB > 0 ? ((scoreB / questionsB) * 100).toFixed(2) : "0.00";
       statsBDisplay.innerText = `Correct Rate: ${percentB}% (${scoreB} / ${questionsB})`;
     }
-
-    loginBtn.addEventListener("click", function () {
-      if (passwordInput.value === correctPassword) {
-        localStorage.setItem("adminAuthenticated", "true");
-        showAdminPanel();
-      } else {
-        loginError.innerText = "Incorrect password. Please try again.";
-      }
-    });
 
     resetABtn.addEventListener("click", function () {
       if (confirm("Reset Stats A?")) {
@@ -127,18 +77,8 @@
       }
     });
 
-    logoutBtn.addEventListener("click", function () {
-      localStorage.removeItem("adminAuthenticated");
-      location.reload();
-    });
-
     window.addEventListener("load", function () {
-      if (checkAuthentication()) {
-        showAdminPanel();
-      } else {
-        loginContainer.classList.remove("hidden");
-        adminContainer.classList.add("hidden");
-      }
+      displayStats();
     });
   </script>
 </body>
