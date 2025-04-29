@@ -24,10 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const blankOptions = ["a", "an", "the"];
   let currentPassageObj;
   let userAnswers = [];
-  let statsActive = true;
-
-  let totalScore = parseInt(localStorage.getItem("totalScore")) || 0;
-  let totalQuestions = parseInt(localStorage.getItem("totalQuestions")) || 0;
 
   function parsePassage(passageText) {
     const parts = passageText.split(/\[([^\]]*)\]/);
@@ -95,19 +91,25 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("score-display").innerText =
       `Your Score: ${score} / ${currentPassageObj.answers.length}`;
 
-    if (statsActive) {
-      const scoreA = parseInt(localStorage.getItem("scoreA")) || 0;
-      const questionsA = parseInt(localStorage.getItem("questionsA")) || 0;
-      localStorage.setItem("scoreA", scoreA + score);
-      localStorage.setItem("questionsA", questionsA + currentPassageObj.answers.length);
+fetch('https://kohtsuki.pythonanywhere.com/submit', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    score: score,
+    total: currentPassageObj.answers.length
+  })
+})
+.then(response => response.json())
+.then(data => {
+  console.log('Score submitted:', data.message);
+})
+.catch(error => {
+  console.error('Error submitting score:', error);
+});
 
-      const scoreB = parseInt(localStorage.getItem("scoreB")) || 0;
-      const questionsB = parseInt(localStorage.getItem("questionsB")) || 0;
-      localStorage.setItem("scoreB", scoreB + score);
-      localStorage.setItem("questionsB", questionsB + currentPassageObj.answers.length);
-    }
-
-    document.getElementById("submit-btn").disabled = true;
+document.getElementById("submit-btn").disabled = true;
   }
 
   document.getElementById("submit-btn").addEventListener("click", function () {
