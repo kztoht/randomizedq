@@ -44,15 +44,15 @@
         .then(response => response.json())
         .then(data => {
           document.getElementById("statsDisplay").innerText =
-            `【統計 A】Overall Correct Rate: ${data.correct_rate}% (${data.total_score} correct out of ${data.total_questions} questions)`;
+            `【Stat A】Overall Correct Rate: ${data.correct_rate}% (${data.total_score} correct out of ${data.total_questions} questions)`;
 
-          // 統計BをlocalStorageから計算
+          // StatBをlocalStorageから計算
           const scoreB = parseInt(localStorage.getItem("scoreB")) || 0;
           const questionsB = parseInt(localStorage.getItem("questionsB")) || 0;
           const correctRateB = questionsB > 0 ? (scoreB / questionsB * 100).toFixed(2) : 0;
 
           document.getElementById("statsDisplayB").innerText =
-            `【統計 B】Since Reset: ${correctRateB}% (${scoreB} correct out of ${questionsB} questions)`;
+            `【Stat B】Since Reset: ${correctRateB}% (${scoreB} correct out of ${questionsB} questions)`;
         })
         .catch(error => {
           document.getElementById("statsDisplay").innerText = "Failed to load stats.";
