@@ -10,17 +10,17 @@
       font-size: 16px;
     }
     .admin-container {
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
       text-align: center;
     }
     .button {
-      margin-top: 10px;
+      margin: 10px;
       padding: 8px 16px;
       font-size: 16px;
       cursor: pointer;
     }
-    #statsDisplay {
+    #statsDisplay, #statsDisplayB {
       margin-top: 20px;
       font-size: 18px;
       font-weight: bold;
@@ -30,8 +30,12 @@
 <body>
   <div class="admin-container">
     <h1>Admin Panel</h1>
-    <div id="statsDisplay">Loading stats...</div>
+
+    <div id="statsDisplay">Loading Stats A...</div>
+    <div id="statsDisplayB">Loading Stats B...</div>
+
     <button id="reloadBtn" class="button">Reload Stats</button>
+    <button id="resetBtn" class="button">Reset Stats B</button>
   </div>
 
   <script>
@@ -40,16 +44,31 @@
         .then(response => response.json())
         .then(data => {
           document.getElementById("statsDisplay").innerText =
-            `Correct Rate: ${data.correct_rate}% (${data.total_score} correct out of ${data.total_questions} questions)`;
+            `【統計 A】Overall Correct Rate: ${data.correct_rate}% (${data.total_score} correct out of ${data.total_questions} questions)`;
+
+          // 統計BをlocalStorageから計算
+          const scoreB = parseInt(localStorage.getItem("scoreB")) || 0;
+          const questionsB = parseInt(localStorage.getItem("questionsB")) || 0;
+          const correctRateB = questionsB > 0 ? (scoreB / questionsB * 100).toFixed(2) : 0;
+
+          document.getElementById("statsDisplayB").innerText =
+            `【統計 B】Since Reset: ${correctRateB}% (${scoreB} correct out of ${questionsB} questions)`;
         })
         .catch(error => {
-          document.getElementById("statsDisplay").innerText = 
-            "Failed to load stats.";
+          document.getElementById("statsDisplay").innerText = "Failed to load stats.";
+          document.getElementById("statsDisplayB").innerText = "Failed to load stats.";
           console.error('Error loading stats:', error);
         });
     }
 
+    function resetStats() {
+      localStorage.setItem("scoreB", 0);
+      localStorage.setItem("questionsB", 0);
+      loadStats();
+    }
+
     document.getElementById("reloadBtn").addEventListener("click", loadStats);
+    document.getElementById("resetBtn").addEventListener("click", resetStats);
 
     // ページ読み込み時に自動でロード
     window.addEventListener("load", loadStats);
