@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Admin Panel</title>
@@ -10,76 +10,49 @@
       font-size: 16px;
     }
     .admin-container {
-      max-width: 400px;
+      max-width: 500px;
       margin: auto;
       text-align: center;
     }
     .button {
       margin-top: 10px;
-      padding: 6px 12px;
+      padding: 8px 16px;
       font-size: 16px;
+      cursor: pointer;
     }
-    .section {
-      margin-bottom: 20px;
+    #statsDisplay {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="admin-container" id="adminContainer">
+  <div class="admin-container">
     <h1>Admin Panel</h1>
-
-    <div class="section">
-      <h3>Stats A</h3>
-      <div id="statsADisplay"></div>
-      <button id="resetABtn" class="button">Reset Stats A</button>
-    </div>
-
-    <div class="section">
-      <h3>Stats B</h3>
-      <div id="statsBDisplay"></div>
-      <button id="resetBBtn" class="button">Reset Stats B</button>
-    </div>
+    <div id="statsDisplay">Loading stats...</div>
+    <button id="reloadBtn" class="button">Reload Stats</button>
   </div>
 
   <script>
-    const statsADisplay = document.getElementById("statsADisplay");
-    const statsBDisplay = document.getElementById("statsBDisplay");
-    const resetABtn = document.getElementById("resetABtn");
-    const resetBBtn = document.getElementById("resetBBtn");
-
-    function displayStats() {
-      const scoreA = parseInt(localStorage.getItem("scoreA")) || 0;
-      const questionsA = parseInt(localStorage.getItem("questionsA")) || 0;
-      const percentA = questionsA > 0 ? ((scoreA / questionsA) * 100).toFixed(2) : "0.00";
-      statsADisplay.innerText = `Correct Rate: ${percentA}% (${scoreA} / ${questionsA})`;
-
-      const scoreB = parseInt(localStorage.getItem("scoreB")) || 0;
-      const questionsB = parseInt(localStorage.getItem("questionsB")) || 0;
-      const percentB = questionsB > 0 ? ((scoreB / questionsB) * 100).toFixed(2) : "0.00";
-      statsBDisplay.innerText = `Correct Rate: ${percentB}% (${scoreB} / ${questionsB})`;
+    function loadStats() {
+      fetch('https://kohtsuki.pythonanywhere.com/stats')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("statsDisplay").innerText =
+            `Correct Rate: ${data.correct_rate}% (${data.total_score} correct out of ${data.total_questions} questions)`;
+        })
+        .catch(error => {
+          document.getElementById("statsDisplay").innerText = 
+            "Failed to load stats.";
+          console.error('Error loading stats:', error);
+        });
     }
 
-    resetABtn.addEventListener("click", function () {
-      if (confirm("Reset Stats A?")) {
-        localStorage.setItem("scoreA", "0");
-        localStorage.setItem("questionsA", "0");
-        displayStats();
-        alert("Stats A has been reset.");
-      }
-    });
+    document.getElementById("reloadBtn").addEventListener("click", loadStats);
 
-    resetBBtn.addEventListener("click", function () {
-      if (confirm("Reset Stats B?")) {
-        localStorage.setItem("scoreB", "0");
-        localStorage.setItem("questionsB", "0");
-        displayStats();
-        alert("Stats B has been reset.");
-      }
-    });
-
-    window.addEventListener("load", function () {
-      displayStats();
-    });
+    // ページ読み込み時に自動でロード
+    window.addEventListener("load", loadStats);
   </script>
 </body>
 </html>
