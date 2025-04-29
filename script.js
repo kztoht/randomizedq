@@ -110,6 +110,12 @@ fetch('https://kohtsuki.pythonanywhere.com/submit', {
   console.error('Error submitting score:', error);
 });
 
+// Add too StatB in localStorage
+const scoreB = parseInt(localStorage.getItem("scoreB")) || 0;
+const questionsB = parseInt(localStorage.getItem("questionsB")) || 0;
+localStorage.setItem("scoreB", scoreB + score);
+localStorage.setItem("questionsB", questionsB + currentPassageObj.answers.length);
+
 document.getElementById("submit-btn").disabled = true;
   }
 
