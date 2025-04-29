@@ -3,22 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Calibri, sans-serif;
       margin: 20px;
       font-size: 16px;
+      background-color: #f9f9f9;
+      color: #333;
     }
     .admin-container {
       max-width: 600px;
       margin: auto;
       text-align: center;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .button {
       margin: 10px;
-      padding: 8px 16px;
+      padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .button:hover {
+      background-color: #3367d6;
     }
     #statsDisplay, #statsDisplayB {
       margin-top: 20px;
@@ -31,11 +45,11 @@
   <div class="admin-container">
     <h1>Admin Panel</h1>
 
-    <div id="statsDisplay">Loading Stats A...</div>
-    <div id="statsDisplayB">Loading Stats B...</div>
+    <div id="statsDisplay">Loading Stat A...</div>
+    <div id="statsDisplayB">Loading Stat B...</div>
 
     <button id="reloadBtn" class="button">Reload Stats</button>
-    <button id="resetBtn" class="button">Reset Stats B</button>
+    <button id="resetBtn" class="button">Reset Stat B</button>
   </div>
 
   <script>
@@ -44,33 +58,36 @@
         .then(response => response.json())
         .then(data => {
           document.getElementById("statsDisplay").innerText =
-            `【Stat A】Overall Correct Rate: ${data.correct_rate}% (${data.total_score} correct out of ${data.total_questions} questions)`;
-
-          // StatBをlocalStorageから計算
-          const scoreB = parseInt(localStorage.getItem("scoreB")) || 0;
-          const questionsB = parseInt(localStorage.getItem("questionsB")) || 0;
-          const correctRateB = questionsB > 0 ? (scoreB / questionsB * 100).toFixed(2) : 0;
+            `【Stat A】Overall: ${data.correct_rate}% (${data.total_score} correct / ${data.total_questions} total)`;
 
           document.getElementById("statsDisplayB").innerText =
-            `【Stat B】Since Reset: ${correctRateB}% (${scoreB} correct out of ${questionsB} questions)`;
+            `【Stat B】Since Reset: ${data.correct_rate_b}% (${data.total_score_b} correct / ${data.total_questions_b} total)`;
         })
         .catch(error => {
-          document.getElementById("statsDisplay").innerText = "Failed to load stats.";
-          document.getElementById("statsDisplayB").innerText = "Failed to load stats.";
+          document.getElementById("statsDisplay").innerText = "Failed to load Stat A.";
+          document.getElementById("statsDisplayB").innerText = "Failed to load Stat B.";
           console.error('Error loading stats:', error);
         });
     }
 
     function resetStats() {
-      localStorage.setItem("scoreB", 0);
-      localStorage.setItem("questionsB", 0);
-      loadStats();
+      fetch('https://kohtsuki.pythonanywhere.com/reset', {
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        loadStats();
+      })
+      .catch(error => {
+        alert("Failed to reset Stat B.");
+        console.error('Error resetting stats:', error);
+      });
     }
 
     document.getElementById("reloadBtn").addEventListener("click", loadStats);
     document.getElementById("resetBtn").addEventListener("click", resetStats);
 
-    // ページ読み込み時に自動でロード
     window.addEventListener("load", loadStats);
   </script>
 </body>
