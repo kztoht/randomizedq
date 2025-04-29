@@ -88,8 +88,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    document.getElementById("score-display").innerText =
-      `Your Score: ${score} / ${currentPassageObj.answers.length}`;
+    // Now hiding the score
+    // document.getElementById("score-display").innerText =
+    //  `Your Score: ${score} / ${currentPassageObj.answers.length}`;
 
 fetch('https://kohtsuki.pythonanywhere.com/submit', {
   method: 'POST',
