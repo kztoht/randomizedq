@@ -4,34 +4,71 @@ body {
   line-height: 1.6;
   background-color: #fafafa;
   color: #333;
+  max-width: 800px; /* ★PCで横に広がりすぎない */
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 16px; /* ★ベースの文字大きさ */
 }
 
 h1, h2, h3 {
   color: #444;
+  text-align: center; /* ★中央揃えでタイトル感UP */
 }
 
 #quiz-section {
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* ★余裕を持たせる */
 }
 
 #passage {
   border: 1px solid #ddd;
-  padding: 15px;
+  padding: 20px; /* ★余白を広げて読みやすく */
   background-color: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  border-radius: 8px; /* ★少し角丸にするとやさしい印象 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* ★ほんの少し影をつけて浮き上がらせる */
 }
 
 select {
-  margin: 0 4px;
-  padding: 4px;
+  margin: 4px;
+  padding: 8px 12px; /* ★タッチしやすいサイズに */
+  font-size: 16px;
+  min-width: 70px;
 }
 
 button {
-  padding: 8px 12px;
-  margin-top: 10px;
+  padding: 12px 20px;
+  margin-top: 15px;
+  font-size: 18px;
+  width: 100%; /* ★スマホで押しやすいよう全幅ボタン */
+  box-sizing: border-box;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px; /* ★ボタンも角丸で柔らかい見た目に */
   cursor: pointer;
 }
 
+button:hover {
+  background-color: #45a049; /* ★ボタンに軽いホバーエフェクト */
+}
+
 hr {
-  margin: 20px 0;
+  margin: 30px 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 18px; /* ★スマホではさらに大きく */
+    padding: 15px;
+  }
+  select {
+    font-size: 18px;
+    min-width: 80px;
+  }
+  button {
+    font-size: 20px;
+    padding: 14px;
+  }
 }
